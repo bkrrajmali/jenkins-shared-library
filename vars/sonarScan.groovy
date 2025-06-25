@@ -5,7 +5,7 @@ def call(Map args = [:]) {
 
     withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN')]) {
         withSonarQubeEnv('SonarQubeServer') {
-            sh "mvn sonar:sonar -Dsonar.login=$SONAR_TOKEN ${sonarArgs}"
+            sh "mvn sonar:sonar ${sonarArgs}"
         }
     }
 }
