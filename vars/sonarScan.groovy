@@ -1,11 +1,12 @@
-def call(Map args = [:]) {
-    def sonarArgs = args.get('params', '')
-
-    log("Starting SonarQube analysis")
-
-    withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN')]) {
-        withSonarQubeEnv('SonarQubeServer') {
-            sh "mvn sonar:sonar ${sonarArgs}"
-        }
+def call(Map config) {
+    withSonarQubeEnv('SonarQubeServer') {
+        sh """
+            mvn sonar:sonar \
+                -Dsonar.organization=${config.organization} \
+                -Dsonar.projectKey=${config.projectKey} \
+                -Dsonar.projectName=${config.projectName} \
+                -Dsonar.java.binaries=. \
+                -Dsonar.exclusions=${config.exclusions}
+        """
     }
 }
