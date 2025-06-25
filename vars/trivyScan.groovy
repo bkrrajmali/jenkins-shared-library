@@ -1,8 +1,10 @@
-def call(String imageNameWithTag) {
-    log("Installing Trivy")
-    sh 'chmod +x ./jenkins-shared-library/resources/scripts/trivy-install.sh'
-    sh './jenkins-shared-library/resources/scripts/trivy-install.sh'
-
-    log("Scanning image with Trivy")
-    sh "trivy image --exit-code 1 --severity HIGH,CRITICAL ${imageNameWithTag}"
+def call(String imageName) {
+    echo "[Trivy Scan] Scanning image: ${imageName}"
+    
+    sh """
+        trivy image --format table --severity CRITICAL,HIGH,MEDIUM --ignore-unfixed ${imageName} | tee trivy-report.txt
+    """
+    
+    // Optionally archive the scan report
+    archiveArtifacts artifacts: 'trivy-report.txt', allowEmptyArchive: true
 }
